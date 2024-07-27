@@ -11,17 +11,23 @@ public class Assignments {
     private String assignmentTitle;
     private String description;
     private String dateOfSubmission;
+    private int id;
 
-    public Assignments(String assignmentTitle, String description, String dateOfSubmission) {
+    public Assignments(String assignmentTitle, String description, String dateOfSubmission,int id) {
         this.assignmentTitle = assignmentTitle;
         this.description = description;
-        this.dateOfSubmission = "";
+        this.dateOfSubmission = dateOfSubmission;
+        this.id=id;
     }
 
     public String getAssignmentTitle() {
         return assignmentTitle;
     }
-
+    
+     public int getAssignId() {
+        return id;
+    }
+     
     public String getDescription() {
         return description;
     }

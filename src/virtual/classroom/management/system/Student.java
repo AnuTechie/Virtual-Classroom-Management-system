@@ -8,20 +8,28 @@ package virtual.classroom.management.system;/**
  */
 public class Student {
     private String name;
-    private int id;
+    private String id;
     private int marks;
+    private String password;
+    private boolean isPresent;
 
-    public Student(String name, int id) {
+    public Student(String name, String id,String password) {
         this.name = name;
         this.id = id;
         this.marks = 0;
+        this.password=password;
+        this.isPresent=true;
     }
 
     public String getName() {
         return name;
     }
-
-    public int getId() {
+    
+    public boolean isPresent()
+    {
+        return isPresent;
+    }
+    public String getId() {
         return id;
     }
 
@@ -32,7 +40,14 @@ public class Student {
     public void setMarks(int marks) {
         this.marks = marks;
     }
-
+    public void setAttendance(boolean isPresent) {
+        this.isPresent = isPresent;
+    }
+    public String getPassword(String id)
+    {
+        return password;
+    }
+    
     public void postDoubts() {
         System.out.println(name + " has posted doubts.");
     }

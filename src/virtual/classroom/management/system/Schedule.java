@@ -12,11 +12,13 @@ public class Schedule {
     private String date;
     private String time;
     private String topics;
+    private int id;
 
-    public Schedule(String date, String time, String topics) {
+    public Schedule(String date, String time, String topics,int id) {
         this.date = date;
         this.time = time;
         this.topics = topics;
+        this.id=id;
     }
 
     public String getDate() {
@@ -30,7 +32,11 @@ public class Schedule {
     public String getTopics() {
         return topics;
     }
-
+    
+    public int getId()
+    {
+        return id;
+    }
     @Override
     public String toString() {
         return "Schedule{" +

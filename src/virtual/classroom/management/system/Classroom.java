@@ -5,6 +5,7 @@
 package virtual.classroom.management.system;
 import java.util.ArrayList;
 import java.util.HashMap;
+//import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 /**
@@ -19,7 +20,8 @@ public class Classroom {
     public ArrayList<Student> students;
     private ArrayList<Assignments> assignments;
     private List<Schedule> schedules;
-    private Map<Student, Boolean> attendance;
+   // private Map<Student, Boolean> attendance;
+    //private final ArrayList<Schedule> schedules;
 
     public Classroom(String classCode, String className,String teacherName) {
         this.classCode = classCode;
@@ -29,7 +31,7 @@ public class Classroom {
         this.students = new ArrayList<>();
         this.assignments = new ArrayList<>();
         this.schedules = new ArrayList<>();
-        this.attendance = new HashMap<>();
+        //this.attendance = new HashMap<>();
     }
 
     public String getClassCode() {
@@ -47,7 +49,10 @@ public class Classroom {
     public ArrayList<Student> getStudents() {
         return students;
     }
-    
+    public String getTeacherName()
+    {
+        return teacherName;
+    }
     public ArrayList<Assignments> getAssignments() {
         return assignments;
     }
@@ -60,24 +65,24 @@ public class Classroom {
         numberOfStudents++;
     }
     
-    public void removeStudent(int studentId) {
-        students.removeIf(student -> student.getId() == studentId);
+    public void removeStudent(String studentId) {
+        students.removeIf(student -> (student.getId() == null ? studentId == null : student.getId().equals(studentId)));
     }
     
     public void addAssignment(Assignments assignment) {
         assignments.add(assignment);
     }
     
-    public void removeAssignment(String title) {
-        assignments.removeIf(assignment -> assignment.getTitle().equals(title));
+    public void removeAssignment(int assignId) {
+        assignments.removeIf(assignment -> assignment.getAssignId()==(assignId));
     }
     
     public void scheduleClass(Schedule schedule) {
         schedules.add(schedule);
     }
     
-    public void removeSchedule(String date, String time) {
-        schedules.removeIf(schedule -> schedule.getDate().equals(date) && schedule.getTime().equals(time));
+    public void removeSchedule(int Id) {
+        schedules.removeIf(schedule -> schedule.getId()==(Id));
     }
 
      
@@ -85,24 +90,69 @@ public class Classroom {
         return schedules;
     }
      
-    public void markAttendance(List<Integer> absentees) {
+   public void markAttendance(List<String> absentees) {
         for (Student student : students) {
-            attendance.put(student, !absentees.contains(student.getId()));
+            if (absentees.contains(student.getId())) {
+                student.setAttendance(false);
+            } 
+        }
+        viewAttendance();
+    }
+   
+     public void displayScheduleDetails() {
+        if (schedules.isEmpty()) {
+            System.out.println("No schedules available for this classroom.");
+            return;
+        }
+        System.out.println("Schedules for Classroom: " + className);
+        for (Schedule schedule : schedules) {
+            System.out.println("Date: " + schedule.getDate());
+            System.out.println("Time: " + schedule.getTime());
+            System.out.println("Topics: " + schedule.getTopics());
+            System.out.println("-------------------------");
         }
     }
+     public void displayStudentDetails() {
+        if (students.isEmpty()) {
+            System.out.println("No students available in this classroom.");
+            return;
+        }
+        System.out.println("Classroom Name: " + className);
+        for (Student student : students) {
+            System.out.println("Name: " + student.getName());
+            System.out.println("ID: " + student.getId());
+            System.out.println("Marks: " + student.getMarks());
+            System.out.println("-------------------------");
+        }
+    }
+    
+    // Other attributes and methods...
+
+    public void displayAssignmentDetails() {
+        if (assignments.isEmpty()) {
+            System.out.println("No assignments available for this classroom.");
+            return;
+        }
+        System.out.println("Assignments for Classroom: " + className);
+        for (Assignments assignment : assignments) {
+            System.out.println("Title: " + assignment.getTitle());
+            System.out.println("Description: " + assignment.getDescription());
+            System.out.println("Date of Submission: " + assignment.getDateOfSubmission());
+            System.out.println("-------------------------");
+        }
+    }
+    
     public void viewAttendance() {
-        System.out.println("Attendance for Classroom: " + className);
         int presentCount = 0;
         int absentCount = 0;
-        for (Map.Entry<Student, Boolean> entry : attendance.entrySet()) {
-            Student student = entry.getKey();
-            boolean isPresent = entry.getValue();
-            if (isPresent) {
+        System.out.println("Attendance for Classroom: " + className);
+        for (Student student : students) {
+            System.out.println("Student ID: " + student.getId() + ", Name: " + student.getName() + ", Attendance: " + (student.isPresent() ? "Present" : "Absent"));
+            if (student.isPresent()) {
                 presentCount++;
             } else {
                 absentCount++;
             }
-            System.out.println("Student ID: " + student.getId() + ", Name: " + student.getName() + ", Present: " + isPresent);
         }
         System.out.println("Total Present: " + presentCount);
         System.out.println("Total Absent: " + absentCount);
