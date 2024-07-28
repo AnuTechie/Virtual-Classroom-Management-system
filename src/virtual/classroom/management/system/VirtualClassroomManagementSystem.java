@@ -20,10 +20,10 @@ public class VirtualClassroomManagementSystem {
         String clsCode,cc;
         Classroom foundClassroom;
         Student foundStudent=null;
-        String password;
+        String password,stuId,content;
         String clsName,teacherName = null,studId,title;
         List<Classroom> classrooms = new ArrayList<>();
-        int x=0,y=0,assignId;
+        int x=0,y=0,assignId,ch,count;
         Teacher[] teachers;
         teachers = new Teacher[5];
         teachers[0] = new Teacher("Dr. Smith", 1, "smith");
@@ -41,7 +41,7 @@ public class VirtualClassroomManagementSystem {
         students[4]=new Student("Evans","CS71","evans");
         
         Scanner scanner = new Scanner(System.in);
-        boolean exit1=false,exit2;
+        boolean exit1=false,exit2,exit3;
         
        
        while(!exit1){
@@ -86,8 +86,8 @@ public class VirtualClassroomManagementSystem {
             System.out.println("5. Post Marks");
             System.out.println("6. Remove Assignments");
             System.out.println("7. Schedule Classes");
-            System.out.println("8.Remove a schedule");
-            System.out.println("9.Mark Attendance");
+            System.out.println("8. Remove a schedule");
+            System.out.println("9. Mark Attendance");
             System.out.println("10.View Student attendance");
             System.out.println("11.Display Schedule details");
             System.out.println("12.Display Student details");
@@ -95,9 +95,8 @@ public class VirtualClassroomManagementSystem {
             System.out.println("14.Remove classroom");
             System.out.println("15.Display classroom details");
             System.out.println("16.Exit");
+            System.out.println("17.View Submitted Assignments");
             System.out.print("Choose an option: ");
-           
-            
             int t=scanner.nextInt();
             switch (t)
             {
@@ -510,6 +509,41 @@ public class VirtualClassroomManagementSystem {
                     }
                     break;
                 }
+                case 17:
+                {
+                    scanner.nextLine();
+                    System.out.println("Enter the class code");
+                    cc=scanner.nextLine();
+                    foundClassroom = null;
+                            for (Classroom cls : classrooms) {
+                                if (cls.getClassCode().equals(cc)) {
+                                    foundClassroom = cls;
+                                    break;
+                                }
+                            }
+                            if (foundClassroom == null) {
+                                System.out.println("Classroom not found.");
+                                break;
+                            }
+                            if(loggedInTeacher.getName().equals(foundClassroom.getTeacherName()))
+                            {
+                                foundClassroom.displayAssignmentDetails();
+                                System.out.println("Enter assignement code");
+                                int ac=scanner.nextInt();
+                                if(foundClassroom.foundAssignment(ac))
+                                {
+                                    foundClassroom.getSubmissions(ac);
+                                }
+                                else
+                                {
+                                    System.out.println("Enter a valid code. Assignment code not found");
+                                }
+                            }
+                            else{
+                                System.out.println("You are not a teacher of this classroom");
+                            }
+                            break;
+                }
                 default:
                 {
                     System.out.println("Enter correct choice!");
@@ -520,9 +554,193 @@ public class VirtualClassroomManagementSystem {
            }
            case 2:
            {
-           
-           
-           
+               scanner.nextLine();
+               System.out.print("Enter Student roll no:");
+               stuId = scanner.nextLine();
+              
+               System.out.print("Enter password:");
+               // password = scanner.nextLine();
+                password = scanner.nextLine().trim();
+
+                Student loggedInStudent = null;
+                for (Student stu : students) {
+                    if (stu.getId().equals(stuId) && stu.login(password))
+                     {
+                           loggedInStudent = stu;
+                           //teacherName=stu.getName();
+                           System.out.println("LOGIN SUCCESSFUL!!");
+                           break;
+                       }
+                }
+
+                if (loggedInStudent == null) {
+                    System.out.println("Invalid credentials. Please try again.");
+                    continue;
+                }
+                exit3=false;
+                while(!exit3)
+                {
+                    System.out.println("1.My classrooms");
+                    System.out.println("2.View schedules");
+                    System.out.println("3.View Assignment details");
+                    System.out.println("4.View marks");
+                    System.out.println("5.Submit Assignments");
+                    System.out.println("6.Post Doubts");
+                    System.out.println("7.Delete Submitted Assignment");
+                   /* System.out.println("8.Remove a schedule");
+                    System.out.println("9.Mark Attendance");
+                    System.out.println("10.View Student attendance");
+                    System.out.println("11.Display Schedule details");
+                    System.out.println("12.Display Student details");
+                    System.out.println("13.Display Assignment details");  
+                    System.out.println("14.Remove classroom");
+                    System.out.println("15.Display classroom details");*/
+                    System.out.println("16.Exit");
+                    System.out.println("Choose your option");
+                    ch=scanner.nextInt();
+                    switch(ch)
+                    {
+                        case 1:
+                        {
+                            count=0;
+                            System.out.println("Your Classrooms :");
+                            System.out.println("-----------------");
+                            for (Classroom cls : classrooms) {
+                                for (Student st : cls.students) {
+                                    if (st.getId().equals(loggedInStudent.getId())) {
+                                        System.out.println(cls.getClassCode()+":"+cls.getClassName());
+                                        count++;
+                                       // loggedInStudent.addRoom(cls.getClassCode() + ": " + cls.getClassName());
+                                        //rooms.add(cls.classCode + ": " + cls.className);
+                                        break; // Move to the next classroom once the student is found
+                                    }
+                                }
+                               
+                            }
+                            if(count==0)
+                            {
+                                System.out.println("You are not added to any classrooms");
+                            }
+                            break;
+                        }
+                        case 2:
+                        {
+                            count=0;
+                            scanner.nextLine();
+                            System.out.println("Enter the class code to view schedules of a classroom");
+                            cc=scanner.nextLine();
+                            foundClassroom = null;
+                            for (Classroom cls : classrooms) {
+                                if (cls.getClassCode().equals(cc)) {
+                                    foundClassroom = cls;
+                                    break;
+                                }
+                            }
+
+                            if (foundClassroom == null) {
+                                System.out.println("Classroom not found.");
+                                break;
+                            }
+                            for (Student st : foundClassroom.students) {
+                                    if (st.getId().equals(loggedInStudent.getId())) {
+                                        foundClassroom.displayScheduleDetails();
+                                        count++;
+                                        break; // Move to the next classroom once the student is found
+                                    }   
+                            }
+                            if(count==0)
+                            {
+                                System.out.println("You are not added to the classroom");
+                            }
+                            break;
+                        }
+                        case 3:
+                        {
+                            scanner.nextLine();
+                            System.out.println("Enter the class code to view Assignments of a classroom");
+                            cc=scanner.nextLine();
+                            foundClassroom = null;
+                            for (Classroom cls : classrooms) {
+                                if (cls.getClassCode().equals(cc)) {
+                                    foundClassroom = cls;
+                                    break;
+                                }
+                            }
+                            if (foundClassroom == null) {
+                                System.out.println("Classroom not found.");
+                                break;
+                            }
+                            for (Student st : foundClassroom.students) {
+                                    if (st.getId().equals(loggedInStudent.getId())) {
+                                        foundClassroom.displayAssignmentDetails();
+                                        break; 
+                                    }
+                                    else
+                                    {
+                                        System.out.println("You're not added to the classroom");
+                                    }
+                            break;
+                            }
+                            break;
+                        }
+                        case 4:
+                        {
+                            break;
+                        }
+                        case 5:
+                        {
+                            count=0;
+                            scanner.nextLine();
+                            System.out.println("Enter the class code to view assignments of a classroom");
+                            cc=scanner.nextLine();
+                            foundClassroom = null;
+                            for (Classroom cls : classrooms) {
+                                if (cls.getClassCode().equals(cc)) {
+                                    foundClassroom = cls;
+                                    break;
+                                }
+                            }
+
+                            if (foundClassroom == null) {
+                                System.out.println("Classroom not found.");
+                                break;
+                            }
+                            for (Student st : foundClassroom.students) {
+                                    if (st.getId().equals(loggedInStudent.getId())) {
+                                        foundClassroom.displayAssignmentDetails();
+                                        count++;
+                                        break; // Move to the next classroom once the student is found
+                                }
+                            }
+                            if(count==0)
+                            {
+                                System.out.println("You are not added to the classroom"); 
+                            }
+                            else
+                            {
+                                System.out.println("Enter the Assignment code:");
+                                int assignCode = scanner.nextInt();
+                                scanner.nextLine(); // Consume the newline
+
+                                if (foundClassroom.foundAssignment(assignCode)) {
+                                    System.out.println("Enter your content:");
+                                    content = scanner.nextLine();
+                                    foundClassroom.submitAssignment(assignCode, loggedInStudent, content);
+                                    System.out.println("Assignment submitted successfully.");
+                                }
+                            break;
+                        }
+                            
+                        }
+                        case 16:
+                        {
+                            exit3=true;
+                            break;
+                        }
+                    
+                    }
+                    
+                }
                break;
            }
                

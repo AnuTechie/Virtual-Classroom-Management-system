@@ -5,9 +5,11 @@
 package virtual.classroom.management.system;
 import java.util.ArrayList;
 import java.util.HashMap;
+//import java.util.HashMap;
 //import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+//import java.util.Map;
 /**
  *
  * @author 91807
@@ -20,6 +22,7 @@ public class Classroom {
     public ArrayList<Student> students;
     private ArrayList<Assignments> assignments;
     private List<Schedule> schedules;
+    private HashMap<Integer, HashMap<Student, String>> assignmentSubmissions;
    // private Map<Student, Boolean> attendance;
     //private final ArrayList<Schedule> schedules;
 
@@ -31,6 +34,7 @@ public class Classroom {
         this.students = new ArrayList<>();
         this.assignments = new ArrayList<>();
         this.schedules = new ArrayList<>();
+        this.assignmentSubmissions = new HashMap<>();
         //this.attendance = new HashMap<>();
     }
 
@@ -49,20 +53,43 @@ public class Classroom {
     public ArrayList<Student> getStudents() {
         return students;
     }
+    
     public String getTeacherName()
     {
         return teacherName;
     }
+    
     public ArrayList<Assignments> getAssignments() {
         return assignments;
     }
+    
     public void postAssignment(Assignments assignment) {
         assignments.add(assignment);
     }
+    
+    public void submitAssignment(int assignCode, Student student, String content) {
+        assignmentSubmissions.computeIfAbsent(assignCode, k -> new HashMap<>()).put(student, content);
+    }
+    
+    public void getSubmissions(int assignCode) {
+        HashMap<Student, String> submissions = assignmentSubmissions.get(assignCode);
+        if (submissions == null || submissions.isEmpty()) {
+            System.out.println("No submissions found for assignment code: " + assignCode);
+            return;
+        }
 
+        System.out.println("Submissions for assignment code " + assignCode + ":");
+        for (Map.Entry<Student, String> entry : submissions.entrySet()) {
+            Student student = entry.getKey();
+            String content = entry.getValue();
+            System.out.println("Student ID: " + student.getId() + ", Content: " + content);
+        }
+    }
+    
     public void addStudent(Student student) {
         students.add(student);
         numberOfStudents++;
+       // student.addClassroom(this);
     }
     
     public void removeStudent(String studentId) {
@@ -135,13 +162,28 @@ public class Classroom {
         }
         System.out.println("Assignments for Classroom: " + className);
         for (Assignments assignment : assignments) {
+            System.out.println("Assignment ID : "+assignment.getAssignId());
             System.out.println("Title: " + assignment.getTitle());
             System.out.println("Description: " + assignment.getDescription());
             System.out.println("Date of Submission: " + assignment.getDateOfSubmission());
             System.out.println("-------------------------");
         }
     }
-    
+    public boolean foundAssignment(int assignCode)
+    {
+         if (assignments.isEmpty()) {
+            System.out.println("No assignments available for this classroom.");
+            return false;
+        }
+        for (Assignments assignment : assignments)
+        {
+            if(assignment.getAssignId()==assignCode)
+            {
+                return true;
+            }
+        }
+        return false; 
+    }
     public void viewAttendance() {
         int presentCount = 0;
         int absentCount = 0;
