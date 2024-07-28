@@ -51,10 +51,10 @@ public class Teacher {
         System.out.println("Class scheduled.");
     }
 
-    public void postMarks(Student student, int marks) {
+   /* public void postMarks(Student student, int marks) {
         student.setMarks(marks);
         System.out.println("Marks posted for student: " + student.getName());
-    }
+    }*/
 }
 
 

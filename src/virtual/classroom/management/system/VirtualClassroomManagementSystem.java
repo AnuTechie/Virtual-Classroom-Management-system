@@ -23,7 +23,7 @@ public class VirtualClassroomManagementSystem {
         String password,stuId,content;
         String clsName,teacherName = null,studId,title;
         List<Classroom> classrooms = new ArrayList<>();
-        int x=0,y=0,assignId,ch,count;
+        int x=0,y=0,tid = 0,temp = 0,assignId,ch,count;
         Teacher[] teachers;
         teachers = new Teacher[5];
         teachers[0] = new Teacher("Dr. Smith", 1, "smith");
@@ -56,7 +56,6 @@ public class VirtualClassroomManagementSystem {
            case 1:
            {
                System.out.print("Enter teacher ID: ");
-               
                int teacherId = scanner.nextInt();
                scanner.nextLine();
                System.out.print("Enter password: ");
@@ -67,6 +66,7 @@ public class VirtualClassroomManagementSystem {
                     if (t.getId() == teacherId && t.login(password)) {
                         loggedInTeacher = t;
                         teacherName=t.getName();
+                        tid=t.getId();
                         System.out.println("LOGIN SUCCESSFUL!!");
                         break;
                     }
@@ -108,21 +108,33 @@ public class VirtualClassroomManagementSystem {
                     scanner.nextLine();
                     System.out.println("Enter the Class Code");
                     cc=scanner.nextLine();
+                    
+                    boolean classCodeExists = false;
+                    for (Classroom cls : classrooms) {
+                    if (cls.getClassCode().equals(cc)) {
+                        classCodeExists = true;
+                        break;
+                    }
+                    }
+                    if (classCodeExists) {
+                        System.out.println("Class Code already exists. Classroom creation failed.");
+                    }
+                    else{
                     System.out.println("Enter the Class Name");
                     clsName=scanner.nextLine();
-                  //  System.out.println("Enter the Teacher Name");
-                    //teacherName=scanner.nextLine();
                     Classroom c1;
-                    c1 = new Classroom(cc,clsName,teacherName);
+                    c1 = new Classroom(cc,clsName,teacherName,tid);
                     classrooms.add(c1);
                     System.out.println("Classroom created Successfully. Here's the details");
                     System.out.println("Class Code : "+cc);
                     System.out.println("Class Name : "+clsName);
                     System.out.println("Teacher Name : "+teacherName);
+                    }
                     break;
                 }
                 case 2:
                 {
+                    
                     System.out.println("Student List as follows");
                     for(Student s : students) {
                         System.out.println("NAME  : " + s.getName());
@@ -145,8 +157,9 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Classroom not found. Please create the classroom first.");
                         break;
                     }
-
-                    System.out.println("Enter student roll number:");
+                    if(foundClassroom.getTid()==loggedInTeacher.getId())
+                    {
+                        System.out.println("Enter student roll number:");
                     studId = scanner.nextLine();
                     foundStudent = null;
 
@@ -178,6 +191,14 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Class Code : " + cc);
                         System.out.println("Student Name : " + foundStudent.getName());
                     }
+                        
+                    
+                    
+                    }
+                    else{
+                        System.out.println("You dont have permission to add student in this classroom");
+                    }
+                    
                     break;
                 }
 
@@ -198,7 +219,7 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Classroom not found. Please create the classroom first.");
                         break;
                     }
-                    
+                    if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     System.out.print("Enter student ID to remove: ");
                     //int studId = Integer.parseInt(scanner.nextLine());
                     foundStudent=null;
@@ -217,7 +238,12 @@ public class VirtualClassroomManagementSystem {
                     else
                     {
                         foundClassroom.removeStudent(studId);
+                        
                         System.out.println("Student removed successfully.");
+                    }
+                }
+                    else{
+                        System.out.println("You dont have permission to remove student in this classroom");
                     }
                     break;
                 }
@@ -239,6 +265,7 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Classroom not found. Please create the classroom first.");
                         break;
                     }
+                    if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     System.out.println("Enter the following details for the assignment");
                    // scanner.nextLine();
                     System.out.print("Enter assignment title: ");
@@ -258,7 +285,86 @@ public class VirtualClassroomManagementSystem {
                     System.out.println("Assignment title : "+title);
                     System.out.println("Description : "+description);
                     System.out.println("Date of submission : "+dateOfSubmission);
+                    
+                    } else{
+                        System.out.println("You dont have permission to remove student in this classroom");
+                    }
                     break;
+                }
+                case 5:
+                {
+                 //  int c;
+                   count=0;
+                   scanner.nextLine();
+                   System.out.println("Enter the class code to grade the assignment");
+                   cc=scanner.nextLine();
+                   foundClassroom=null;
+                   for (Classroom cls : classrooms) {
+                        if (cls.getClassCode().equals(cc)) {
+                            foundClassroom = cls;
+                            break;
+                        }
+                    }
+
+                    if (foundClassroom == null) {
+                        System.out.println("Classroom not found. Please create the classroom first.");
+                        break;
+                    }
+                    
+                    if (foundClassroom.getTid()==loggedInTeacher.getId()) 
+                    {
+                        foundClassroom.displayAssignmentDetails();
+                        System.out.println("Enter assignment code:");
+                        int ac = scanner.nextInt();
+                        scanner.nextLine(); // Consume the newline
+
+                        if (foundClassroom.foundAssignment(ac)) {
+                            if(foundClassroom.getSubmissions(ac))
+                            {
+                                System.out.println("Enter student ID to post marks:");
+                                String studentId = scanner.nextLine();
+                                for (Student st : foundClassroom.students) {
+                                    if (st.getId().equals(studentId)) {
+                                       // foundClassroom.displayAssignmentDetails();
+                                        count++;
+                                       // break; // Move to the next classroom once the student is found
+                                }
+                                }
+                                if(count==0)
+                                {
+                                    System.out.println("Student not found in the classroom"); 
+                                }
+                                if(foundClassroom.hasStudentSubmittedAssignment(ac, studentId))
+                                {
+                                    //c=0;
+                                    System.out.println("Enter marks:");
+                                    int marks = scanner.nextInt();
+                                    scanner.nextLine();
+                                    for (Student student : students) {
+                                    if (student.getId().equals(studentId)) {
+                                        student.setMarks(ac, marks);
+                                        System.out.println("Marks posted successfully for student ID: " + studentId);
+                                        //c++;
+                                    }
+                                } 
+                            }
+                            else{
+                                System.out.println("This student haven't submitted the assignment");
+                            }
+                        }
+                        else
+                        {
+                            System.out.println("NO submissions found for this assignement") ;
+                        }
+                        
+                    } else {
+                        System.out.println("Enter a valid code. Assignment code not found");
+                    }
+                } 
+                else {
+                    System.out.println("You do not have permission to grade this classroom's assignments.");
+                }
+                break;
                 }
                 case 6:
                 {
@@ -278,11 +384,16 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Classroom not found. Please create the classroom first.");
                         break;
                     }
-                    
-                    System.out.print("Enter assignment id to remove: ");
+                    if(foundClassroom.getTid()==loggedInTeacher.getId()){
+                        System.out.print("Enter assignment id to remove: ");
                     assignId = scanner.nextInt();
                     foundClassroom.removeAssignment(assignId);
                     System.out.println("Assignment removed successfully.");
+                        
+                    }
+                    else{
+                        System.out.println("You dont have permission to post assignment in this classroom");
+                    }
                     break;
                 
                 }
@@ -305,6 +416,7 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Classroom not found. Please create the classroom first.");
                         break;
                     }
+                    if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     System.out.println("Enter the following details for scheduling the class");
                   //  scanner.nextLine();
                     System.out.print("Enter date of the class (YYYY-MM-DD): ");
@@ -323,7 +435,10 @@ public class VirtualClassroomManagementSystem {
                     System.out.println("Date : "+date);
                     System.out.println("Time: "+time);
                     System.out.println("Topics : "+topics);
-                    
+                    }
+                    else{
+                        System.out.println("You dont have permission to schedule classes in this classroom");
+                    }
                     break;
                 }
                 case 8:
@@ -344,14 +459,15 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Classroom not found. Please create the classroom first.");
                         break;
                     }
-                   // scanner.nextLine();
+                   if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     System.out.print("Enter the schedule id : ");
                     int removeId = scanner.nextInt();
-                    //scanner.nextLine();
-                  //  System.out.print("Enter time of the class (HH:MM) to remove: ");
-                   // String removeTime = scanner.nextLine();
                     foundClassroom.removeSchedule(removeId);
                     System.out.println("Schedule removed successfully.");
+                   }
+                   else{
+                       System.out.println("You dont have permission to remove schedule in this classroom");
+                   }
                     break;
                 }
                 case 9:
@@ -373,7 +489,7 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Classroom not found. Please create the classroom first.");
                         return;
                     }
-
+                    if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     List<String> absentees = new ArrayList<>();
                     boolean done = false;
                     System.out.println("Enter student IDs of absentees (type 'done' when finished):");
@@ -391,6 +507,10 @@ public class VirtualClassroomManagementSystem {
 
                     foundClassroom.markAttendance(absentees);
                     System.out.println("Attendance marked successfully.");
+                    }
+                    else{
+                        System.out.println("You dont have permission to mark attendance in this classroom");
+                    }
                     break;
    
                 }
@@ -412,8 +532,12 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("Classroom not found. Please create the classroom first.");
                         break;
                     }
-
+                    if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     foundClassroom.viewAttendance();
+                    }
+                    else{
+                        System.out.println("You dont have permission to view attendance in this classroom");
+                    }
                     break;
                 }
                 case 11:
@@ -424,54 +548,90 @@ public class VirtualClassroomManagementSystem {
                     boolean c=false;
                     for (Classroom classroom : classrooms) {
                         if (classroom.getClassCode().equals(cc)) {
-                            classroom.displayScheduleDetails();
-                            c=true;
-                            break;  
+                            
+                            if(classroom.getTid()==loggedInTeacher.getId()){
+                                classroom.displayScheduleDetails();
+                                c=true;
+                                break;
+                            }   
+                        }  
+                        else{
+                        temp=1;
                         }
                     }
                     if(!c) {
                         System.out.println("Classroom not found.");
+                    }
+                    if(temp==1)
+                    {
+                        System.out.println("You dont have permission to view");
                     }
                     break;
                 }
                 case 12:
                 {
+                    int temp1 = 0;
                     scanner.nextLine();
                     System.out.print("Enter Class Code: ");
                     cc = scanner.nextLine();
                     boolean c=false;
                     for (Classroom classroom : classrooms) {
-                        if (classroom.getClassCode().equals(cc)) {
+                        if (classroom.getClassCode().equals(cc))
+                        {
+                            if(classroom.getTid()==loggedInTeacher.getId())
+                            {
                             classroom.displayStudentDetails();
                             c=true;
-                            break;  
+                            break; 
+                            }
+                            else{
+                             temp1=1;
+                            }
                         }
                     }
                     if(!c) {
                         System.out.println("Classroom not found.");
+                    }
+                     if(temp1==1)
+                    {
+                        System.out.println("You dont have permission to view");
                     }
                     break;
                 }
                 case 13:
                 {
+                    int temp2=0;
                     scanner.nextLine();
                     System.out.print("Enter Class Code: ");
                     cc = scanner.nextLine();
                     boolean c=false;
                     for (Classroom classroom : classrooms) {
-                        if (classroom.getClassCode().equals(cc)) {
-                            classroom.displayAssignmentDetails();
+                        if (classroom.getClassCode().equals(cc))
+                        {
+                            if(classroom.getTid()==loggedInTeacher.getId()){
+                                classroom.displayAssignmentDetails();
                             c=true;
-                            break;  
+                            break; 
+                            
+                            }
+                            else{
+                            temp2=1;
+                            }
+                             
                         }
                     }
                     if(!c) {
                         System.out.println("Classroom not found.");
                     }
+                    if(temp2==1)
+                    {
+                        System.out.println("You dont have permission to view");
+                    }
                     break;
                 }
                 case 14:
                 {
+                    int temp3=0;
                     scanner.nextLine();
                     System.out.println("Enter the class code to remove");
                     cc=scanner.nextLine();
@@ -479,10 +639,21 @@ public class VirtualClassroomManagementSystem {
                     while (iterator.hasNext()) {
                         Classroom classroom = iterator.next();
                         if (classroom.getClassCode().equals(cc)) {
-                            iterator.remove();
+                            if(classroom.getTid()==loggedInTeacher.getId()){
+                                iterator.remove();
                             System.out.println("Classroom with Class Code " + cc + " has been removed.");
-                            return;
+                            //return;
+                            }
+                            else{
+                                temp3=1;
+                            
+                            }
+                            
                         }
+                    }
+                    if(temp3==1)
+                    {
+                        System.out.println("You dont have permission to delete this classroom");
                     }
                     System.out.println("Classroom with Class Code " + cc + " not found.");
                     break;
@@ -525,7 +696,7 @@ public class VirtualClassroomManagementSystem {
                                 System.out.println("Classroom not found.");
                                 break;
                             }
-                            if(loggedInTeacher.getName().equals(foundClassroom.getTeacherName()))
+                            if(tid==foundClassroom.getTid())
                             {
                                 foundClassroom.displayAssignmentDetails();
                                 System.out.println("Enter assignement code");
@@ -656,6 +827,7 @@ public class VirtualClassroomManagementSystem {
                         }
                         case 3:
                         {
+                            count=0;
                             scanner.nextLine();
                             System.out.println("Enter the class code to view Assignments of a classroom");
                             cc=scanner.nextLine();
@@ -673,18 +845,48 @@ public class VirtualClassroomManagementSystem {
                             for (Student st : foundClassroom.students) {
                                     if (st.getId().equals(loggedInStudent.getId())) {
                                         foundClassroom.displayAssignmentDetails();
+                                        count++;
                                         break; 
-                                    }
-                                    else
-                                    {
-                                        System.out.println("You're not added to the classroom");
-                                    }
-                            break;
+                                    }      
+                            }
+                            if(count==0)
+                            {
+                                System.out.println("You are not added to the classroom");
                             }
                             break;
                         }
                         case 4:
                         {
+                            count=0;
+                            scanner.nextLine();
+                            System.out.println("Enter the class code to view marks of a assignment");
+                            cc=scanner.nextLine();
+                            foundClassroom = null;
+                            for (Classroom cls : classrooms) {
+                                if (cls.getClassCode().equals(cc)) {
+                                    foundClassroom = cls;
+                                    break;
+                                }
+                            }
+
+                            if (foundClassroom == null) {
+                                System.out.println("Classroom not found.");
+                                break;
+                            }
+                            for (Student st : foundClassroom.students) {
+                                    if (st.getId().equals(loggedInStudent.getId())) {
+                                        foundClassroom.displayAssignmentDetails();
+                                        System.out.println("Enter Assignemnt code");
+                                        int ac=scanner.nextInt();
+                                        foundClassroom.displayMarks(ac,loggedInStudent.getId());
+                                        count++;
+                                        break; // Move to the next classroom once the student is found
+                                    }   
+                            }
+                            if(count==0)
+                            {
+                                System.out.println("You are not added to the classroom");
+                            }
                             break;
                         }
                         case 5:
@@ -730,6 +932,48 @@ public class VirtualClassroomManagementSystem {
                                 }
                             break;
                         }
+                        }
+                        case 6:
+                        {
+                            /*System.out.println("Enter the class code to delete submitted assignment:");
+                            String cc = scanner.nextLine();
+                            Classroom foundClassroom = null;
+
+                            for (Classroom cls : classrooms) {
+                                if (cls.getClassCode().equals(cc)) {
+                                    foundClassroom = cls;
+                                    break;
+                                }
+                            }
+
+                            if (foundClassroom == null) {
+                                System.out.println("Classroom not found.");
+                                break;
+                            }
+
+                            boolean isStudentInClass = false;
+                            for (Student st : foundClassroom.students) {
+                                if (st.getId().equals(loggedInStudent.getId())) {
+                                    isStudentInClass = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isStudentInClass) {
+                                System.out.println("You are not added to the classroom");
+                            } else {
+                                System.out.println("Enter the Assignment code:");
+                                int assignCode = scanner.nextInt();
+                                scanner.nextLine(); // Consume the newline
+
+                                if (foundClassroom.foundAssignment(assignCode)) {
+                                    foundClassroom.deleteSubmittedAssignment(assignCode, loggedInStudent);
+                                } else {
+                                    System.out.println("Assignment code not found.");
+                                }
+                            }*/
+
+                            break;
                             
                         }
                         case 16:

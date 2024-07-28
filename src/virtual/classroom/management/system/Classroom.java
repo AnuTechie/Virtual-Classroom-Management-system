@@ -23,10 +23,11 @@ public class Classroom {
     private ArrayList<Assignments> assignments;
     private List<Schedule> schedules;
     private HashMap<Integer, HashMap<Student, String>> assignmentSubmissions;
+    private int tid;
    // private Map<Student, Boolean> attendance;
     //private final ArrayList<Schedule> schedules;
 
-    public Classroom(String classCode, String className,String teacherName) {
+    public Classroom(String classCode, String className,String teacherName,int tid) {
         this.classCode = classCode;
         this.className = className;
         this.teacherName=teacherName;
@@ -35,6 +36,7 @@ public class Classroom {
         this.assignments = new ArrayList<>();
         this.schedules = new ArrayList<>();
         this.assignmentSubmissions = new HashMap<>();
+        this.tid=tid;
         //this.attendance = new HashMap<>();
     }
 
@@ -42,6 +44,10 @@ public class Classroom {
         return classCode;
     }
 
+    public int getTid(){
+        return tid;
+    }
+    
     public String getClassName() {
         return className;
     }
@@ -71,11 +77,11 @@ public class Classroom {
         assignmentSubmissions.computeIfAbsent(assignCode, k -> new HashMap<>()).put(student, content);
     }
     
-    public void getSubmissions(int assignCode) {
+    public boolean getSubmissions(int assignCode) {
         HashMap<Student, String> submissions = assignmentSubmissions.get(assignCode);
         if (submissions == null || submissions.isEmpty()) {
             System.out.println("No submissions found for assignment code: " + assignCode);
-            return;
+            return false;
         }
 
         System.out.println("Submissions for assignment code " + assignCode + ":");
@@ -84,6 +90,20 @@ public class Classroom {
             String content = entry.getValue();
             System.out.println("Student ID: " + student.getId() + ", Content: " + content);
         }
+        return true;
+    }
+    
+    public boolean hasStudentSubmittedAssignment(int assignCode, String studId) {
+        HashMap<Student, String> submissions = assignmentSubmissions.get(assignCode);
+        if (submissions == null) {
+            return false;
+        }
+        for (Student student : submissions.keySet()) {
+            if (student.getId().equals(studId)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public void addStudent(Student student) {
@@ -94,6 +114,7 @@ public class Classroom {
     
     public void removeStudent(String studentId) {
         students.removeIf(student -> (student.getId() == null ? studentId == null : student.getId().equals(studentId)));
+        numberOfStudents--;
     }
     
     public void addAssignment(Assignments assignment) {
@@ -148,7 +169,7 @@ public class Classroom {
         for (Student student : students) {
             System.out.println("Name: " + student.getName());
             System.out.println("ID: " + student.getId());
-            System.out.println("Marks: " + student.getMarks());
+           // System.out.println("Marks: " + student.getMarks());
             System.out.println("-------------------------");
         }
     }
@@ -199,6 +220,31 @@ public class Classroom {
         System.out.println("Total Present: " + presentCount);
         System.out.println("Total Absent: " + absentCount);
     }
+
+    public void deleteSubmittedAssignment(int assignCode, Student student) {
+        HashMap<Student, String> submissions = assignmentSubmissions.get(assignCode);
+        if (submissions != null && submissions.remove(student) != null) {
+            System.out.println("Assignment submission deleted successfully.");
+        } else {
+            System.out.println("Submission not found for the given assignment code.");
+        }
+    }
+    
+    public void displayMarks(int assignCode, String studentId) {
+        for (Student student : students) {
+            if (student.getId().equals(studentId)) {
+                int marks = student.getMarks(assignCode);
+                if (marks != -1) {
+                    System.out.println("Marks for assignment code " + assignCode + ": " + marks);
+                } else {
+                    System.out.println("No marks found for assignment code " + assignCode + " for student ID " + studentId);
+                }
+                return;
+            }
+        }
+        System.out.println("Student ID not found in this classroom.");
+    }
+    
     public void viewAssignments() {
         for (Assignments assignment : assignments) {
             System.out.println("Assignment Title: " + assignment.getAssignmentTitle());

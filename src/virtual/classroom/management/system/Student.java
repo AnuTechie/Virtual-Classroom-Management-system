@@ -5,6 +5,7 @@
 package virtual.classroom.management.system;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -13,20 +14,22 @@ import java.util.ArrayList;
 public class Student {
     private final String name;
     private final String id;
-    private int marks;
+   // private int marks;
     private final String password;
     private ArrayList<String> rooms;
     private boolean isPresent;
+    private HashMap<Integer, Integer> marks;
     
 
     public Student(String name, String id,String password) {
         this.name = name.trim();
         this.id = id.trim();
-        this.marks = 0;
+      //  this.marks = 0;
         this.password=password.trim();
         this.isPresent=true;
        // this.doubts=[];
         this.rooms = new ArrayList<>();
+        this.marks = new HashMap<>();
     }
 
     public String getName() {
@@ -46,13 +49,14 @@ public class Student {
     {
         return doubts;
     }*/
-    public int getMarks() {
+  /*  public int getMarks() {
         return marks;
-    }
+    }*/
 
-    public void setMarks(int marks) {
+   /* public void setMarks(int marks) {
         this.marks = marks;
-    }
+    }*/
+    
     public void setAttendance(boolean isPresent) {
         this.isPresent = isPresent;
     }
@@ -74,6 +78,14 @@ public class Student {
     
     public void addRoom(String room) {
         rooms.add(room);
+    }
+    
+    public void setMarks(int assignCode, int marks) {
+        this.marks.put(assignCode, marks);
+    }
+    
+    public int getMarks(int assignCode) {
+        return this.marks.getOrDefault(assignCode, -1); // -1 indicates no marks
     }
     
     public ArrayList<String> getRooms() {
