@@ -138,15 +138,32 @@ public class Classroom {
         return schedules;
     }
      
-   public void markAttendance(List<String> absentees) {
+      public void markAttendance(List<String> absentees) {
         for (Student student : students) {
             if (absentees.contains(student.getId())) {
-                student.setAttendance(false);
-            } 
+                student.setAttendance(classCode, false);
+            } else {
+                student.setAttendance(classCode, true);
+            }
         }
         viewAttendance();
     }
-   
+       public void viewAttendance() {
+        int presentCount = 0;
+        int absentCount = 0;
+        System.out.println("Attendance for Classroom: " + className);
+        for (Student student : students) {
+            boolean isPresent = student.isPresent(classCode);
+            System.out.println("Student ID: " + student.getId() + ", Name: " + student.getName() + ", Attendance: " + (isPresent ? "Present" : "Absent"));
+            if (isPresent) {
+                presentCount++;
+            } else {
+                absentCount++;
+            }
+        }
+        System.out.println("Total Present: " + presentCount);
+        System.out.println("Total Absent: " + absentCount);
+    }
      public void displayScheduleDetails() {
         if (schedules.isEmpty()) {
             System.out.println("No schedules available for this classroom.");
@@ -205,7 +222,7 @@ public class Classroom {
         }
         return false; 
     }
-    public void viewAttendance() {
+    /*public void viewAttendance() {
         int presentCount = 0;
         int absentCount = 0;
         System.out.println("Attendance for Classroom: " + className);
@@ -219,7 +236,7 @@ public class Classroom {
         }
         System.out.println("Total Present: " + presentCount);
         System.out.println("Total Absent: " + absentCount);
-    }
+    }*/
 
     public void deleteSubmittedAssignment(int assignCode, Student student) {
         HashMap<Student, String> submissions = assignmentSubmissions.get(assignCode);

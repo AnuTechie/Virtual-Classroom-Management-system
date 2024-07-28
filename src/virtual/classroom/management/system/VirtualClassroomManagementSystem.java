@@ -487,26 +487,31 @@ public class VirtualClassroomManagementSystem {
 
                     if (foundClassroom == null) {
                         System.out.println("Classroom not found. Please create the classroom first.");
-                        return;
+                       // return;
                     }
                     if(foundClassroom.getTid()==loggedInTeacher.getId()){
-                    List<String> absentees = new ArrayList<>();
-                    boolean done = false;
-                    System.out.println("Enter student IDs of absentees (type 'done' when finished):");
-                    while (!done) {
-                        System.out.print("Enter student ID: ");
-                        String input = scanner.nextLine();
-                        if (input.equalsIgnoreCase("done")) {
-                            done = true;
-                        } else if (absentees.contains(input)) {
-                            System.out.println("Student marked absent already.");
-                        } else {
-                            absentees.add(input);
+                        if(foundClassroom.getNumberOfStudents()>0)
+                        {
+                        List<String> absentees = new ArrayList<>();
+                        boolean done = false;
+                        System.out.println("Enter student IDs of absentees (type 'done' when finished):");
+                        while (!done) {
+                            System.out.print("Enter student ID: ");
+                            String input = scanner.nextLine();
+                            if (input.equalsIgnoreCase("done")) {
+                                done = true;
+                            } else if (absentees.contains(input)) {
+                                System.out.println("Student marked absent already.");
+                            } else {
+                                absentees.add(input);
+                            }
                         }
-                    }
 
-                    foundClassroom.markAttendance(absentees);
-                    System.out.println("Attendance marked successfully.");
+                        foundClassroom.markAttendance(absentees);
+                        System.out.println("Attendance marked successfully.");}
+                        else{
+                            System.out.println("There's no students in this classroom");
+                        }
                     }
                     else{
                         System.out.println("You dont have permission to mark attendance in this classroom");

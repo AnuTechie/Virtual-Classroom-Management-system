@@ -19,6 +19,7 @@ public class Student {
     private ArrayList<String> rooms;
     private boolean isPresent;
     private HashMap<Integer, Integer> marks;
+     private HashMap<String, Boolean> attendance;
     
 
     public Student(String name, String id,String password) {
@@ -30,6 +31,7 @@ public class Student {
        // this.doubts=[];
         this.rooms = new ArrayList<>();
         this.marks = new HashMap<>();
+        this.attendance=new HashMap<>();
     }
 
     public String getName() {
@@ -56,9 +58,11 @@ public class Student {
    /* public void setMarks(int marks) {
         this.marks = marks;
     }*/
-    
-    public void setAttendance(boolean isPresent) {
-        this.isPresent = isPresent;
+    public void setAttendance(String classCode, boolean isPresent) {
+        attendance.put(classCode, isPresent);
+    }
+    public boolean isPresent(String classCode) {
+        return attendance.getOrDefault(classCode, true); // Default to true if not found
     }
     public String getPassword(String id)
     {
