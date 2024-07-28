@@ -25,10 +25,8 @@ public class Student {
     public Student(String name, String id,String password) {
         this.name = name.trim();
         this.id = id.trim();
-      //  this.marks = 0;
         this.password=password.trim();
         this.isPresent=true;
-       // this.doubts=[];
         this.rooms = new ArrayList<>();
         this.marks = new HashMap<>();
         this.attendance=new HashMap<>();
@@ -47,17 +45,7 @@ public class Student {
     public String getId() {
         return id;
     }
-    /*public String getDoubts()
-    {
-        return doubts;
-    }*/
-  /*  public int getMarks() {
-        return marks;
-    }*/
-
-   /* public void setMarks(int marks) {
-        this.marks = marks;
-    }*/
+    
     public void setAttendance(String classCode, boolean isPresent) {
         attendance.put(classCode, isPresent);
     }
@@ -95,23 +83,7 @@ public class Student {
     public ArrayList<String> getRooms() {
         return rooms;
     }
-     
-     
-    /*public void addClassroom(Classroom classroom) {
-        if (!classrooms.contains(classroom)) {
-            classrooms.add(classroom);
-        }
-    }
-
-    // Remove a classroom from the student's list
-    public void removeClassroom(Classroom classroom) {
-        classrooms.remove(classroom);
-    }
-
-    // Get the list of classrooms
-    public List<Classroom> getClassrooms() {
-        return classrooms;
-    }*/
+    
     public void viewMarks() {
         System.out.println(name + "'s Marks: " + marks);
     }

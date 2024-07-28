@@ -24,6 +24,7 @@ public class VirtualClassroomManagementSystem {
         String clsName,teacherName = null,studId,title;
         List<Classroom> classrooms = new ArrayList<>();
         int x=0,y=0,tid = 0,temp = 0,assignId,ch,count;
+        
         Teacher[] teachers;
         teachers = new Teacher[5];
         teachers[0] = new Teacher("Dr. Smith", 1, "smith");
@@ -59,7 +60,6 @@ public class VirtualClassroomManagementSystem {
                int teacherId = scanner.nextInt();
                scanner.nextLine();
                System.out.print("Enter password: ");
-               // password = scanner.nextLine();
                 password = scanner.nextLine().trim();
                 Teacher loggedInTeacher = null;
                 for (Teacher t : teachers) {
@@ -142,7 +142,7 @@ public class VirtualClassroomManagementSystem {
                         System.out.println("------------------------");
                     }
                     System.out.println("Enter the following details");
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine(); 
                     System.out.println("Enter the Class Code of the classroom to add the student to:");
                     cc = scanner.nextLine();
                     foundClassroom = null;
@@ -221,7 +221,6 @@ public class VirtualClassroomManagementSystem {
                     }
                     if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     System.out.print("Enter student ID to remove: ");
-                    //int studId = Integer.parseInt(scanner.nextLine());
                     foundStudent=null;
                     studId=scanner.nextLine();
                     for (Student s1 : students) {
@@ -267,19 +266,15 @@ public class VirtualClassroomManagementSystem {
                     }
                     if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     System.out.println("Enter the following details for the assignment");
-                   // scanner.nextLine();
                     System.out.print("Enter assignment title: ");
                     title = scanner.nextLine();
-                   // scanner.nextLine();
                     System.out.print("Enter assignment description: ");
                     String description = scanner.nextLine();
-                   // scanner.nextLine();
                     System.out.print("Enter date of submission: ");
                     String dateOfSubmission = scanner.nextLine();
                     Assignments assignment = new Assignments(title, description, dateOfSubmission,x);
                     foundClassroom.postAssignment(assignment);
                     System.out.println("Assignment posted successfully.");
-                   // System.out.println("Classroom created Successfully. Here's the details");
                     System.out.println("Class Code : "+cc);
                     System.out.println("Assignment id : "+x);
                     System.out.println("Assignment title : "+title);
@@ -293,7 +288,7 @@ public class VirtualClassroomManagementSystem {
                 }
                 case 5:
                 {
-                 //  int c;
+                 
                    count=0;
                    scanner.nextLine();
                    System.out.println("Enter the class code to grade the assignment");
@@ -325,18 +320,19 @@ public class VirtualClassroomManagementSystem {
                                 String studentId = scanner.nextLine();
                                 for (Student st : foundClassroom.students) {
                                     if (st.getId().equals(studentId)) {
-                                       // foundClassroom.displayAssignmentDetails();
                                         count++;
-                                       // break; // Move to the next classroom once the student is found
+                                        break; 
                                 }
                                 }
                                 if(count==0)
                                 {
-                                    System.out.println("Student not found in the classroom"); 
+                                    System.out.println("Student not found in the classroom");
+                                    break;
                                 }
+                                else{
                                 if(foundClassroom.hasStudentSubmittedAssignment(ac, studentId))
                                 {
-                                    //c=0;
+                                    
                                     System.out.println("Enter marks:");
                                     int marks = scanner.nextInt();
                                     scanner.nextLine();
@@ -344,17 +340,19 @@ public class VirtualClassroomManagementSystem {
                                     if (student.getId().equals(studentId)) {
                                         student.setMarks(ac, marks);
                                         System.out.println("Marks posted successfully for student ID: " + studentId);
-                                        //c++;
+                                       
                                     }
                                 } 
                             }
                             else{
                                 System.out.println("This student haven't submitted the assignment");
                             }
+                            }
                         }
                         else
                         {
                             System.out.println("NO submissions found for this assignement") ;
+                            break;
                         }
                         
                     } else {
@@ -418,13 +416,10 @@ public class VirtualClassroomManagementSystem {
                     }
                     if(foundClassroom.getTid()==loggedInTeacher.getId()){
                     System.out.println("Enter the following details for scheduling the class");
-                  //  scanner.nextLine();
                     System.out.print("Enter date of the class (YYYY-MM-DD): ");
                     String date = scanner.nextLine();
-                   // scanner.nextLine();
                     System.out.print("Enter time of the class (HH:MM): ");
                     String time = scanner.nextLine();
-                  //  scanner.nextLine();
                     System.out.print("Enter topics to be covered: ");
                     String topics = scanner.nextLine();
                     Schedule schedule = new Schedule(date, time, topics,y);
@@ -472,7 +467,6 @@ public class VirtualClassroomManagementSystem {
                 }
                 case 9:
                 {
-                    //------
                     scanner.nextLine();
                    System.out.println("Enter the Class Code of the classroom to mark attendance for:");
                     cc = scanner.nextLine();
@@ -487,7 +481,6 @@ public class VirtualClassroomManagementSystem {
 
                     if (foundClassroom == null) {
                         System.out.println("Classroom not found. Please create the classroom first.");
-                       // return;
                     }
                     if(foundClassroom.getTid()==loggedInTeacher.getId()){
                         if(foundClassroom.getNumberOfStudents()>0)
@@ -735,7 +728,7 @@ public class VirtualClassroomManagementSystem {
                stuId = scanner.nextLine();
               
                System.out.print("Enter password:");
-               // password = scanner.nextLine();
+              
                 password = scanner.nextLine().trim();
 
                 Student loggedInStudent = null;
@@ -743,7 +736,7 @@ public class VirtualClassroomManagementSystem {
                     if (stu.getId().equals(stuId) && stu.login(password))
                      {
                            loggedInStudent = stu;
-                           //teacherName=stu.getName();
+                           
                            System.out.println("LOGIN SUCCESSFUL!!");
                            break;
                        }
@@ -761,17 +754,7 @@ public class VirtualClassroomManagementSystem {
                     System.out.println("3.View Assignment details");
                     System.out.println("4.View marks");
                     System.out.println("5.Submit Assignments");
-                    System.out.println("6.Post Doubts");
-                    System.out.println("7.Delete Submitted Assignment");
-                   /* System.out.println("8.Remove a schedule");
-                    System.out.println("9.Mark Attendance");
-                    System.out.println("10.View Student attendance");
-                    System.out.println("11.Display Schedule details");
-                    System.out.println("12.Display Student details");
-                    System.out.println("13.Display Assignment details");  
-                    System.out.println("14.Remove classroom");
-                    System.out.println("15.Display classroom details");*/
-                    System.out.println("16.Exit");
+                    System.out.println("6.Exit");
                     System.out.println("Choose your option");
                     ch=scanner.nextInt();
                     switch(ch)
@@ -940,55 +923,10 @@ public class VirtualClassroomManagementSystem {
                         }
                         case 6:
                         {
-                            /*System.out.println("Enter the class code to delete submitted assignment:");
-                            String cc = scanner.nextLine();
-                            Classroom foundClassroom = null;
-
-                            for (Classroom cls : classrooms) {
-                                if (cls.getClassCode().equals(cc)) {
-                                    foundClassroom = cls;
-                                    break;
-                                }
-                            }
-
-                            if (foundClassroom == null) {
-                                System.out.println("Classroom not found.");
-                                break;
-                            }
-
-                            boolean isStudentInClass = false;
-                            for (Student st : foundClassroom.students) {
-                                if (st.getId().equals(loggedInStudent.getId())) {
-                                    isStudentInClass = true;
-                                    break;
-                                }
-                            }
-
-                            if (!isStudentInClass) {
-                                System.out.println("You are not added to the classroom");
-                            } else {
-                                System.out.println("Enter the Assignment code:");
-                                int assignCode = scanner.nextInt();
-                                scanner.nextLine(); // Consume the newline
-
-                                if (foundClassroom.foundAssignment(assignCode)) {
-                                    foundClassroom.deleteSubmittedAssignment(assignCode, loggedInStudent);
-                                } else {
-                                    System.out.println("Assignment code not found.");
-                                }
-                            }*/
-
-                            break;
-                            
-                        }
-                        case 16:
-                        {
                             exit3=true;
                             break;
                         }
-                    
-                    }
-                    
+                    } 
                 }
                break;
            }

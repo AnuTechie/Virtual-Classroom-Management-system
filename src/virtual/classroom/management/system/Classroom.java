@@ -24,8 +24,7 @@ public class Classroom {
     private List<Schedule> schedules;
     private HashMap<Integer, HashMap<Student, String>> assignmentSubmissions;
     private int tid;
-   // private Map<Student, Boolean> attendance;
-    //private final ArrayList<Schedule> schedules;
+   
 
     public Classroom(String classCode, String className,String teacherName,int tid) {
         this.classCode = classCode;
@@ -37,7 +36,7 @@ public class Classroom {
         this.schedules = new ArrayList<>();
         this.assignmentSubmissions = new HashMap<>();
         this.tid=tid;
-        //this.attendance = new HashMap<>();
+       
     }
 
     public String getClassCode() {
@@ -109,7 +108,7 @@ public class Classroom {
     public void addStudent(Student student) {
         students.add(student);
         numberOfStudents++;
-       // student.addClassroom(this);
+       
     }
     
     public void removeStudent(String studentId) {
@@ -191,8 +190,7 @@ public class Classroom {
         }
     }
     
-    // Other attributes and methods...
-
+    
     public void displayAssignmentDetails() {
         if (assignments.isEmpty()) {
             System.out.println("No assignments available for this classroom.");
@@ -222,22 +220,7 @@ public class Classroom {
         }
         return false; 
     }
-    /*public void viewAttendance() {
-        int presentCount = 0;
-        int absentCount = 0;
-        System.out.println("Attendance for Classroom: " + className);
-        for (Student student : students) {
-            System.out.println("Student ID: " + student.getId() + ", Name: " + student.getName() + ", Attendance: " + (student.isPresent() ? "Present" : "Absent"));
-            if (student.isPresent()) {
-                presentCount++;
-            } else {
-                absentCount++;
-            }
-        }
-        System.out.println("Total Present: " + presentCount);
-        System.out.println("Total Absent: " + absentCount);
-    }*/
-
+   
     public void deleteSubmittedAssignment(int assignCode, Student student) {
         HashMap<Student, String> submissions = assignmentSubmissions.get(assignCode);
         if (submissions != null && submissions.remove(student) != null) {
